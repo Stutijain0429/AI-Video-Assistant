@@ -8,6 +8,12 @@ from core.extractor import extract_action_items, extract_key_decisions, extract_
 from core.rag_engine import build_rag_chain, ask_question
 
 load_dotenv()
+import os
+load_dotenv()
+
+# ─── Ensure required folders exist ──────────────────────────────
+os.makedirs("downloads", exist_ok=True)
+os.makedirs("vector_db", exist_ok=True)
 
 # ─── Page Config ────────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -421,10 +427,13 @@ if run_btn:
             st.rerun()
 
         except Exception as e:
+            import traceback
             for k in ["audio","transcript","title","summary","extract","rag"]:
                 if st.session_state.pipeline_steps.get(k) == "active":
-                    st.session_state.pipeline_steps[k] = "pending"
+                     st.session_state.pipeline_steps[k] = "pending"
             progress_placeholder.error(f"❌ Error: {e}")
+            with st.expander("🔍 Full error details (for debugging)"):
+                st.code(traceback.format_exc())
 
 # ── Results ──────────────────────────────────────────────────────────────────────
 if st.session_state.result:
