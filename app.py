@@ -260,18 +260,31 @@ h1, h2, h3, h4, h5, h6 {
 
 .chat-bubble {
     display: inline-block;
-    padding: 0.6rem 1rem;
+    padding: 0.75rem 1.1rem;
     border-radius: 10px;
-    font-size: 0.85rem;
-    line-height: 1.6;
+    font-size: 0.9rem;
+    line-height: 1.65;
     max-width: 90%;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.25);
 }
 
 .user-label  { color: var(--accent-glow); }
 .bot-label   { color: var(--accent-2); }
 
-.user-bubble { background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.25); align-self: flex-end; }
-.bot-bubble  { background: rgba(6,182,212,0.1);  border: 1px solid rgba(6,182,212,0.2);   align-self: flex-start; }
+.user-bubble {
+    background: linear-gradient(135deg, rgba(124,58,237,0.35), rgba(124,58,237,0.2));
+    border: 1px solid rgba(124,58,237,0.5);
+    color: #ffffff;
+    align-self: flex-end;
+    font-weight: 500;
+}
+.bot-bubble {
+    background: linear-gradient(135deg, rgba(6,182,212,0.22), rgba(6,182,212,0.1));
+    border: 1px solid rgba(6,182,212,0.45);
+    color: #eafcff;
+    align-self: flex-start;
+    font-weight: 500;
+}
 
 /* ── Divider ── */
 hr {
@@ -519,16 +532,17 @@ if st.session_state.result:
     # Chat input
     chat_col1, chat_col2 = st.columns([5, 1], gap="small")
     with chat_col1:
-        user_input = st.text_input("Your question", placeholder="What were the main decisions made?", label_visibility="collapsed")
+        user_input = st.text_input("Your question", placeholder="What were the main decisions made?", label_visibility="collapsed", key="user_question_input")
     with chat_col2:
         send_btn = st.button("Send →", use_container_width=True)
 
     if send_btn and user_input.strip():
-        with st.spinner("Thinking…"):
-            answer = ask_question(r["rag_chain"], user_input.strip())
-        st.session_state.chat_history.append({"role": "user",      "content": user_input.strip()})
-        st.session_state.chat_history.append({"role": "assistant", "content": answer})
-        st.rerun()
+      with st.spinner("Thinking…"):
+        answer = ask_question(r["rag_chain"], user_input.strip())
+    st.session_state.chat_history.append({"role": "user",      "content": user_input.strip()})
+    st.session_state.chat_history.append({"role": "assistant", "content": answer})
+    st.session_state.user_question_input = ""
+    st.rerun()
 
     if st.session_state.chat_history:
         if st.button("🗑️ Clear Chat", type="secondary"):
