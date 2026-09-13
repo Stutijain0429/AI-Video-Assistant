@@ -21,3 +21,5 @@ vector_db/
 # OS Files
 .DS_Store
 Thumbs.db
+
+cookies.txt
